@@ -1,0 +1,4 @@
+[
+    {"success":{"/lights/1/state/on":false}},
+    {"success":{"/lights/1/state/bri":200}}
+]

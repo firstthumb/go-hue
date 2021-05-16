@@ -1,0 +1,70 @@
+{
+    "state": {
+        "on": false,
+        "bri": 254,
+        "hue": 41440,
+        "sat": 75,
+        "effect": "none",
+        "xy": [
+            0.3146,
+            0.3303
+        ],
+        "ct": 156,
+        "alert": "select",
+        "colormode": "xy",
+        "mode": "homeautomation",
+        "reachable": true
+    },
+    "swupdate": {
+        "state": "noupdates",
+        "lastinstall": "2020-03-10T21:44:50"
+    },
+    "type": "Extended color light",
+    "name": "Lamp1",
+    "modelid": "LCT010",
+    "manufacturername": "Signify Netherlands B.V.",
+    "productname": "Hue color lamp",
+    "capabilities": {
+        "certified": true,
+        "control": {
+            "mindimlevel": 1000,
+            "maxlumen": 806,
+            "colorgamuttype": "C",
+            "colorgamut": [
+                [
+                    0.6915,
+                    0.3083
+                ],
+                [
+                    0.1700,
+                    0.7000
+                ],
+                [
+                    0.1532,
+                    0.0475
+                ]
+            ],
+            "ct": {
+                "min": 153,
+                "max": 500
+            }
+        },
+        "streaming": {
+            "renderer": true,
+            "proxy": true
+        }
+    },
+    "config": {
+        "archetype": "sultanbulb",
+        "function": "mixed",
+        "direction": "omnidirectional",
+        "startup": {
+            "mode": "safety",
+            "configured": true
+        }
+    },
+    "uniqueid": "00:17:88:01:04:7f:1a:23-0b",
+    "swversion": "1.50.2_r30933",
+    "swconfigid": "292E579A",
+    "productid": "Philips-LCT010-1-A19ECLv4"
+}

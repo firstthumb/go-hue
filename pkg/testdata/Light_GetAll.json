@@ -1,0 +1,499 @@
+{
+    "1": {
+        "state": {
+            "on": false,
+            "bri": 254,
+            "hue": 41440,
+            "sat": 75,
+            "effect": "none",
+            "xy": [
+                0.3146,
+                0.3303
+            ],
+            "ct": 156,
+            "alert": "select",
+            "colormode": "xy",
+            "mode": "homeautomation",
+            "reachable": true
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2020-03-10T21:44:50"
+        },
+        "type": "Extended color light",
+        "name": "Lamp1",
+        "modelid": "LCT010",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue color lamp",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 1000,
+                "maxlumen": 806,
+                "colorgamuttype": "C",
+                "colorgamut": [
+                    [
+                        0.6915,
+                        0.3083
+                    ],
+                    [
+                        0.1700,
+                        0.7000
+                    ],
+                    [
+                        0.1532,
+                        0.0475
+                    ]
+                ],
+                "ct": {
+                    "min": 153,
+                    "max": 500
+                }
+            },
+            "streaming": {
+                "renderer": true,
+                "proxy": true
+            }
+        },
+        "config": {
+            "archetype": "sultanbulb",
+            "function": "mixed",
+            "direction": "omnidirectional",
+            "startup": {
+                "mode": "safety",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:17:89:01:01:8f:0a:23-0b",
+        "swversion": "1.50.2_r30933",
+        "swconfigid": "292E579B",
+        "productid": "Philips-LCT010-1-A19ECLv4"
+    },
+    "2": {
+        "state": {
+            "on": false,
+            "bri": 137,
+            "hue": 8402,
+            "sat": 140,
+            "effect": "none",
+            "xy": [
+                0.4575,
+                0.4099
+            ],
+            "ct": 366,
+            "alert": "select",
+            "colormode": "xy",
+            "mode": "homeautomation",
+            "reachable": true
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2020-03-10T21:44:55"
+        },
+        "type": "Extended color light",
+        "name": "Lamp2",
+        "modelid": "LCT010",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue color lamp",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 1000,
+                "maxlumen": 806,
+                "colorgamuttype": "C",
+                "colorgamut": [
+                    [
+                        0.6915,
+                        0.3083
+                    ],
+                    [
+                        0.1700,
+                        0.7000
+                    ],
+                    [
+                        0.1532,
+                        0.0475
+                    ]
+                ],
+                "ct": {
+                    "min": 153,
+                    "max": 500
+                }
+            },
+            "streaming": {
+                "renderer": true,
+                "proxy": true
+            }
+        },
+        "config": {
+            "archetype": "sultanbulb",
+            "function": "mixed",
+            "direction": "omnidirectional",
+            "startup": {
+                "mode": "safety",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:17:89:02:02:77:c2:b3-0b",
+        "swversion": "1.50.2_r30933",
+        "swconfigid": "292E579B",
+        "productid": "Philips-LCT010-1-A19ECLv4"
+    },
+    "3": {
+        "state": {
+            "on": false,
+            "bri": 234,
+            "hue": 6515,
+            "sat": 254,
+            "effect": "none",
+            "xy": [
+                0.5588,
+                0.4080
+            ],
+            "ct": 500,
+            "alert": "select",
+            "colormode": "xy",
+            "mode": "homeautomation",
+            "reachable": true
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2020-03-10T21:44:35"
+        },
+        "type": "Extended color light",
+        "name": "Lamp3",
+        "modelid": "LCT010",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue color lamp",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 1000,
+                "maxlumen": 806,
+                "colorgamuttype": "C",
+                "colorgamut": [
+                    [
+                        0.6915,
+                        0.3083
+                    ],
+                    [
+                        0.1700,
+                        0.7000
+                    ],
+                    [
+                        0.1532,
+                        0.0475
+                    ]
+                ],
+                "ct": {
+                    "min": 153,
+                    "max": 500
+                }
+            },
+            "streaming": {
+                "renderer": true,
+                "proxy": true
+            }
+        },
+        "config": {
+            "archetype": "sultanbulb",
+            "function": "mixed",
+            "direction": "omnidirectional",
+            "startup": {
+                "mode": "safety",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:27:88:01:03:7d:b4:18-0b",
+        "swversion": "1.50.2_r30933",
+        "swconfigid": "292E579B",
+        "productid": "Philips-LCT010-1-A19ECLv4"
+    },
+    "4": {
+        "state": {
+            "on": false,
+            "bri": 254,
+            "hue": 39743,
+            "sat": 110,
+            "effect": "none",
+            "xy": [
+                0.3125,
+                0.3302
+            ],
+            "alert": "select",
+            "colormode": "xy",
+            "mode": "homeautomation",
+            "reachable": true
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2020-01-04T06:46:02"
+        },
+        "type": "Color light",
+        "name": "Lamp4",
+        "modelid": "LLC010",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue iris",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 10000,
+                "maxlumen": 210,
+                "colorgamuttype": "A",
+                "colorgamut": [
+                    [
+                        0.7040,
+                        0.2960
+                    ],
+                    [
+                        0.2151,
+                        0.7106
+                    ],
+                    [
+                        0.1380,
+                        0.0800
+                    ]
+                ]
+            },
+            "streaming": {
+                "renderer": true,
+                "proxy": false
+            }
+        },
+        "config": {
+            "archetype": "hueiris",
+            "function": "decorative",
+            "direction": "upwards",
+            "startup": {
+                "mode": "safety",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:17:88:02:13:32:77:a3-0b",
+        "swversion": "5.127.1.26581"
+    },
+    "5": {
+        "state": {
+            "on": false,
+            "bri": 254,
+            "hue": 8597,
+            "sat": 121,
+            "effect": "none",
+            "xy": [
+                0.4452,
+                0.4068
+            ],
+            "ct": 343,
+            "alert": "select",
+            "colormode": "xy",
+            "mode": "homeautomation",
+            "reachable": true
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2020-03-10T21:44:46"
+        },
+        "type": "Extended color light",
+        "name": "Lamp5",
+        "modelid": "LCT024",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue play",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 100,
+                "maxlumen": 540,
+                "colorgamuttype": "C",
+                "colorgamut": [
+                    [
+                        0.6915,
+                        0.3083
+                    ],
+                    [
+                        0.1700,
+                        0.7000
+                    ],
+                    [
+                        0.1532,
+                        0.0475
+                    ]
+                ],
+                "ct": {
+                    "min": 153,
+                    "max": 500
+                }
+            },
+            "streaming": {
+                "renderer": true,
+                "proxy": true
+            }
+        },
+        "config": {
+            "archetype": "hueplay",
+            "function": "decorative",
+            "direction": "upwards",
+            "startup": {
+                "mode": "safety",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:17:88:02:01:93:4c:95-0b",
+        "swversion": "1.50.2_r30933",
+        "swconfigid": "949259E6",
+        "productid": "3241-3127-7871-LS00"
+    },
+    "6": {
+        "state": {
+            "on": false,
+            "bri": 254,
+            "hue": 8597,
+            "sat": 121,
+            "effect": "none",
+            "xy": [
+                0.4452,
+                0.4068
+            ],
+            "ct": 343,
+            "alert": "select",
+            "colormode": "xy",
+            "mode": "homeautomation",
+            "reachable": true
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2020-03-10T21:44:41"
+        },
+        "type": "Extended color light",
+        "name": "Lamp6",
+        "modelid": "LCT024",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue play",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 100,
+                "maxlumen": 540,
+                "colorgamuttype": "C",
+                "colorgamut": [
+                    [
+                        0.6915,
+                        0.3083
+                    ],
+                    [
+                        0.1700,
+                        0.7000
+                    ],
+                    [
+                        0.1532,
+                        0.0475
+                    ]
+                ],
+                "ct": {
+                    "min": 153,
+                    "max": 500
+                }
+            },
+            "streaming": {
+                "renderer": true,
+                "proxy": true
+            }
+        },
+        "config": {
+            "archetype": "hueplay",
+            "function": "decorative",
+            "direction": "upwards",
+            "startup": {
+                "mode": "safety",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:27:88:01:16:93:52:2d-0b",
+        "swversion": "1.50.2_r30933",
+        "swconfigid": "949259E6",
+        "productid": "3241-3127-7871-LS00"
+    },
+    "7": {
+        "state": {
+            "on": false,
+            "bri": 254,
+            "alert": "select",
+            "mode": "homeautomation",
+            "reachable": true
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2021-01-26T12:31:50"
+        },
+        "type": "Dimmable light",
+        "name": "Lamp7",
+        "modelid": "LWA001",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue white lamp",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 5000,
+                "maxlumen": 800
+            },
+            "streaming": {
+                "renderer": false,
+                "proxy": false
+            }
+        },
+        "config": {
+            "archetype": "sultanbulb",
+            "function": "functional",
+            "direction": "omnidirectional",
+            "startup": {
+                "mode": "safety",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:17:88:01:08:b7:4a:36-0b",
+        "swversion": "1.76.10",
+        "swconfigid": "F48BD383",
+        "productid": "Philips-LWA001-1-A19DLv5"
+    },
+    "8": {
+        "state": {
+            "on": false,
+            "bri": 254,
+            "alert": "select",
+            "mode": "homeautomation",
+            "reachable": true
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2021-01-26T12:31:48"
+        },
+        "type": "Dimmable light",
+        "name": "Lamp8",
+        "modelid": "LWA001",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue white lamp",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 5000,
+                "maxlumen": 800
+            },
+            "streaming": {
+                "renderer": false,
+                "proxy": false
+            }
+        },
+        "config": {
+            "archetype": "sultanbulb",
+            "function": "functional",
+            "direction": "omnidirectional",
+            "startup": {
+                "mode": "safety",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:17:88:02:08:bf:29:a8-0b",
+        "swversion": "1.76.10",
+        "swconfigid": "F48BD383",
+        "productid": "Philips-LWA001-1-A19DLv5"
+    }
+}
