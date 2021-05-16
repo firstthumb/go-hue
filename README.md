@@ -2,7 +2,7 @@
 <h3 align="center">*** Work In Progress ***</h3>
 
 <p align="center">
-  <a href="https://github.com/firstthumb/go-hue/commits/master">
+  <a href="https://github.com/firstthumb/go-hue/commits/main">
     <img src="https://img.shields.io/github/last-commit/firstthumb/go-hue.svg" target="_blank" />
   </a>
   <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/firstthumb/go-hue">
@@ -22,7 +22,7 @@
   <a href="https://github.com/firstthumb/go-hue/graphs/contributors">
     <img alt="GitHub contributors" src="https://img.shields.io/github/contributors/firstthumb/go-hue">
   </a>
-  <a href="https://github.com/firstthumb/go-hue/blob/master/LICENSE.md">
+  <a href="https://github.com/firstthumb/go-hue/blob/main/LICENSE.md">
     <img alt="License: BSD" src="https://img.shields.io/badge/license-MIT-green.svg" target="_blank" />
   </a>
 </p>

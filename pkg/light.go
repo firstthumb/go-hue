@@ -35,18 +35,10 @@ type SetStateRequest struct {
 	XYInc          *[]float32 `json:"xy_inc,omitempty"`
 }
 
-func path(params ...string) string {
-	if len(params) == 1 {
-		return fmt.Sprintf("%v/lights", params[0])
-	} else if len(params) == 2 {
-		return fmt.Sprintf("%v/lights/%v", params[0], params[1])
-	}
-
-	return fmt.Sprintf("%v/lights/%v/%v", params[0], params[1], params[2])
-}
+const lightServiceName = "lights"
 
 func (s *LightService) GetAll(ctx context.Context) ([]*Light, *Response, error) {
-	req, err := s.client.NewRequest(http.MethodGet, path(s.client.Username), nil)
+	req, err := s.client.NewRequest(http.MethodGet, path(lightServiceName, s.client.Username), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -71,7 +63,7 @@ func (s *LightService) GetAll(ctx context.Context) ([]*Light, *Response, error) 
 }
 
 func (s *LightService) Get(ctx context.Context, id string) (*Light, *Response, error) {
-	req, err := s.client.NewRequest(http.MethodGet, path(s.client.Username, id), nil)
+	req, err := s.client.NewRequest(http.MethodGet, path(lightServiceName, s.client.Username, id), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -86,7 +78,7 @@ func (s *LightService) Get(ctx context.Context, id string) (*Light, *Response, e
 }
 
 func (s *LightService) GetNew(ctx context.Context) ([]*Light, *Response, error) {
-	req, err := s.client.NewRequest(http.MethodGet, path(s.client.Username, "new"), nil)
+	req, err := s.client.NewRequest(http.MethodGet, path(lightServiceName, s.client.Username, "new"), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -114,7 +106,7 @@ func (s *LightService) GetNew(ctx context.Context) ([]*Light, *Response, error) 
 }
 
 func (s *LightService) Search(ctx context.Context) (bool, *Response, error) {
-	req, err := s.client.NewRequest(http.MethodPost, path(s.client.Username), nil)
+	req, err := s.client.NewRequest(http.MethodPost, path(lightServiceName, s.client.Username), nil)
 	if err != nil {
 		return false, nil, err
 	}
@@ -137,7 +129,7 @@ func (s *LightService) Search(ctx context.Context) (bool, *Response, error) {
 
 func (s *LightService) Rename(ctx context.Context, id, name string) (bool, *Response, error) {
 	payload := &RenameRequest{name}
-	req, err := s.client.NewRequest(http.MethodPut, path(s.client.Username, id), payload)
+	req, err := s.client.NewRequest(http.MethodPut, path(lightServiceName, s.client.Username, id), payload)
 	if err != nil {
 		return false, nil, err
 	}
@@ -159,7 +151,7 @@ func (s *LightService) Rename(ctx context.Context, id, name string) (bool, *Resp
 }
 
 func (s *LightService) SetState(ctx context.Context, id string, payload *SetStateRequest) ([]*ApiResponse, *Response, error) {
-	req, err := s.client.NewRequest(http.MethodPut, path(s.client.Username, id, "state"), payload)
+	req, err := s.client.NewRequest(http.MethodPut, path(lightServiceName, s.client.Username, id, "state"), payload)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -174,7 +166,7 @@ func (s *LightService) SetState(ctx context.Context, id string, payload *SetStat
 }
 
 func (s *LightService) Delete(ctx context.Context, id string) (bool, *Response, error) {
-	req, err := s.client.NewRequest(http.MethodDelete, path(s.client.Username, id), nil)
+	req, err := s.client.NewRequest(http.MethodDelete, path(lightServiceName, s.client.Username, id), nil)
 	if err != nil {
 		return false, nil, err
 	}

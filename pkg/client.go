@@ -26,6 +26,24 @@ type Response struct {
 	*http.Response
 }
 
+// ApiResponse that Hue returns
+type ApiResponse struct {
+	Success map[string]interface{} `json:"success,omitempty"`
+	Error   *ApiError              `json:"error,omitempty"`
+}
+
+// ErrorResponse that Hue returns
+type ApiError struct {
+	Type        int    `json:"type"`
+	Address     string `json:"address"`
+	Description string `json:"description"`
+}
+
+type DiscoverResponse struct {
+	ID   string `json:"id"`
+	Host string `json:"internalipaddress"`
+}
+
 type Client struct {
 	client *http.Client
 
@@ -49,17 +67,60 @@ type service struct {
 	client *Client
 }
 
-func NewClient(httpClient *http.Client, host, username string) *Client {
-	if httpClient == nil {
-		httpClient = &http.Client{}
+type ClientOptions struct {
+	HttpClient *http.Client
+}
+
+// Discover gets unauthorized client instance
+// You need to login to make authorized service call
+func Discover() (*Client, error) {
+	c := &Client{client: &http.Client{}, UserAgent: userAgent}
+
+	req, err := c.NewRequest(http.MethodGet, "https://discovery.meethue.com/", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	discoveryResponses := new([]*DiscoverResponse)
+	resp, err := c.Do(context.Background(), req, discoveryResponses)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New("Invalid status code returned")
+	}
+
+	if discoveryResponses == nil || len(*discoveryResponses) == 0 {
+		return nil, errors.New("No bridge found on your network")
+	}
+
+	// Use the first bridge on the network
+	baseURL, _ := url.Parse(fmt.Sprintf("http://%s/%s", (*discoveryResponses)[0].Host, defaultBasePath))
+	c.BaseURL = baseURL
+	c.logger = logrusr.NewLogger(logrus.New()) // TODO: Make it configurable
+	c.common.client = c
+	c.Verbose = true // TODO: Make it configurable
+	c.User = (*UserService)(&c.common)
+	c.Light = (*LightService)(&c.common)
+
+	return c, nil
+}
+
+func NewClient(host, username string, opts *ClientOptions) *Client {
+	var httpClient *http.Client
+	if opts == nil || opts.HttpClient == nil {
+		httpClient = &http.Client{} // Create default client
+	} else {
+		httpClient = opts.HttpClient
 	}
 
 	baseURL, _ := url.Parse(fmt.Sprintf("http://%s/%s", host, defaultBasePath))
 
 	c := &Client{client: httpClient, BaseURL: baseURL, UserAgent: userAgent, Username: username}
-	c.logger = logrusr.NewLogger(logrus.New())
+	c.logger = logrusr.NewLogger(logrus.New()) // TODO: Make it configurable
 	c.common.client = c
-	c.Verbose = true
+	c.Verbose = true // TODO: Make it configurable
 	c.User = (*UserService)(&c.common)
 	c.Light = (*LightService)(&c.common)
 
@@ -107,8 +168,10 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 	}
 	req = req.WithContext(ctx)
 
-	body, _ := httputil.DumpRequest(req, true)
-	c.logger.Info(fmt.Sprintf("%s", string(body)))
+	if c.Verbose {
+		body, _ := httputil.DumpRequest(req, true)
+		c.logger.Info(string(body))
+	}
 
 	resp, err := c.client.Do(req)
 	if err != nil {
@@ -116,8 +179,10 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 	}
 	defer resp.Body.Close()
 
-	body, _ = httputil.DumpResponse(resp, true)
-	c.logger.Info(fmt.Sprintf("%s", string(body)))
+	if c.Verbose {
+		body, _ := httputil.DumpResponse(resp, true)
+		c.logger.Info(string(body))
+	}
 
 	switch v := v.(type) {
 	case nil:
@@ -135,23 +200,20 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 	return &Response{Response: resp}, err
 }
 
-type ApiResponse struct {
-	Success map[string]interface{} `json:"success,omitempty"`
-	Error   *ApiError              `json:"error,omitempty"`
+func (c *Client) Login(username string) *Client {
+	c.Username = username
+
+	// TODO: Make a request to verify user login
+
+	return c
 }
 
-type ApiError struct {
-	Type        int    `json:"type"`
-	Address     string `json:"address"`
-	Description string `json:"description"`
+func path(service string, params ...string) string {
+	if len(params) == 1 {
+		return fmt.Sprintf("%v/%v", params[0], service)
+	} else if len(params) == 2 {
+		return fmt.Sprintf("%v/%v/%v", params[0], service, params[1])
+	}
+
+	return fmt.Sprintf("%v/%v/%v/%v", params[0], service, params[1], params[2])
 }
-
-func Bool(v bool) *bool { return &v }
-
-func Int(v int) *int { return &v }
-
-func UInt8(v uint8) *uint8 { return &v }
-
-func Int64(v int64) *int64 { return &v }
-
-func String(v string) *string { return &v }

@@ -1,10 +1,10 @@
 on:
   push:
     branches:
-    - main
+      - main
   pull_request:
     branches:
-    - main
+      - main
 
 name: tests
 env:
@@ -26,37 +26,37 @@ jobs:
     runs-on: ${{ matrix.platform }}
 
     steps:
-    - name: Cancel previous
-      uses: styfle/cancel-workflow-action@89f242ee29e10c53a841bfe71cc0ce7b2f065abc #0.9.0
-      with:
-        access_token: ${{ github.token }}
+      - name: Cancel previous
+        uses: styfle/cancel-workflow-action@89f242ee29e10c53a841bfe71cc0ce7b2f065abc #0.9.0
+        with:
+          access_token: ${{ github.token }}
 
-    - uses: actions/setup-go@v1
-      with:
-        go-version: ${{ matrix.go-version }}
-    - uses: actions/checkout@v2
+      - uses: actions/setup-go@v1
+        with:
+          go-version: ${{ matrix.go-version }}
+      - uses: actions/checkout@v2
 
-    - name: Cache go modules
-      uses: actions/cache@v2
-      with:
-        path: ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-        restore-keys: ${{ runner.os }}-go-
+      - name: Cache go modules
+        uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: ${{ runner.os }}-go-
 
-    - name: Run go fmt
-      if: runner.os != 'Windows'
-      run: diff -u <(echo -n) <(gofmt -d -s .)
+      - name: Run go fmt
+        if: runner.os != 'Windows'
+        run: diff -u <(echo -n) <(gofmt -d -s .)
 
-    - name: Ensure go generate produces a zero diff
-      shell: bash
-      run:  go generate -x ./... && git diff --exit-code; code=$?; git checkout -- .; (exit $code)
+      - name: Ensure go generate produces a zero diff
+        shell: bash
+        run: go generate -x ./... && git diff --exit-code; code=$?; git checkout -- .; (exit $code)
 
-    - name: Run go vet
-      run: go vet ./...
+      - name: Run go vet
+        run: go vet ./...
 
-    - name: Run go test
-      run: go test -v -race -coverprofile coverage.txt -covermode atomic ./...
+      - name: Run go test
+        run: go test -v -race -coverprofile coverage.txt -covermode atomic ./...
 
-    - name: Upload coverage to Codecov
-      if: ${{ matrix.update-coverage }}
-      uses: codecov/codecov-action@v1
+      - name: Upload coverage to Codecov
+        if: ${{ matrix.update-coverage }}
+        uses: codecov/codecov-action@v1
