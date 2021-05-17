@@ -10,10 +10,10 @@ import (
 	funk "github.com/thoas/go-funk"
 )
 
-// Service
+// LightService has functions for groups
 type LightService service
 
-// Request
+// RenameRequest
 type RenameRequest struct {
 	Name string `json:"name"`
 }
@@ -37,6 +37,7 @@ type SetStateRequest struct {
 
 const lightServiceName = "lights"
 
+// GetAll returns a list of all lights that have been discovered by the bridge.
 func (s *LightService) GetAll(ctx context.Context) ([]*Light, *Response, error) {
 	req, err := s.client.NewRequest(http.MethodGet, path(lightServiceName, s.client.Username), nil)
 	if err != nil {
@@ -62,6 +63,7 @@ func (s *LightService) GetAll(ctx context.Context) ([]*Light, *Response, error) 
 	return result, resp, nil
 }
 
+// Get returns light by id
 func (s *LightService) Get(ctx context.Context, id string) (*Light, *Response, error) {
 	req, err := s.client.NewRequest(http.MethodGet, path(lightServiceName, s.client.Username, id), nil)
 	if err != nil {
@@ -77,6 +79,7 @@ func (s *LightService) Get(ctx context.Context, id string) (*Light, *Response, e
 	return parsed, resp, nil
 }
 
+// GetNew returns a list of lights that were discovered the last time a search for new lights was performed.
 func (s *LightService) GetNew(ctx context.Context) ([]*Light, *Response, error) {
 	req, err := s.client.NewRequest(http.MethodGet, path(lightServiceName, s.client.Username, "new"), nil)
 	if err != nil {
@@ -105,6 +108,8 @@ func (s *LightService) GetNew(ctx context.Context) ([]*Light, *Response, error) 
 	return lights, resp, nil
 }
 
+// Search starts searching for new lights
+// The bridge will open the network for 40s.
 func (s *LightService) Search(ctx context.Context) (bool, *Response, error) {
 	req, err := s.client.NewRequest(http.MethodPost, path(lightServiceName, s.client.Username), nil)
 	if err != nil {
@@ -127,6 +132,7 @@ func (s *LightService) Search(ctx context.Context) (bool, *Response, error) {
 	return false, resp, nil
 }
 
+// Rename lights
 func (s *LightService) Rename(ctx context.Context, id, name string) (bool, *Response, error) {
 	payload := &RenameRequest{name}
 	req, err := s.client.NewRequest(http.MethodPut, path(lightServiceName, s.client.Username, id), payload)
@@ -150,6 +156,7 @@ func (s *LightService) Rename(ctx context.Context, id, name string) (bool, *Resp
 	return false, resp, nil
 }
 
+// SetState allows the user to turn the light on and off, modify the hue and effects.
 func (s *LightService) SetState(ctx context.Context, id string, payload *SetStateRequest) ([]*ApiResponse, *Response, error) {
 	req, err := s.client.NewRequest(http.MethodPut, path(lightServiceName, s.client.Username, id, "state"), payload)
 	if err != nil {
@@ -165,6 +172,7 @@ func (s *LightService) SetState(ctx context.Context, id string, payload *SetStat
 	return *apiResponses, resp, nil
 }
 
+// Delete a light from the bridge.
 func (s *LightService) Delete(ctx context.Context, id string) (bool, *Response, error) {
 	req, err := s.client.NewRequest(http.MethodDelete, path(lightServiceName, s.client.Username, id), nil)
 	if err != nil {

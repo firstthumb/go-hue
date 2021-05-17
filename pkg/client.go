@@ -61,6 +61,7 @@ type Client struct {
 
 	User  *UserService
 	Light *LightService
+	Group *GroupService
 }
 
 type service struct {
@@ -103,6 +104,7 @@ func Discover() (*Client, error) {
 	c.Verbose = true // TODO: Make it configurable
 	c.User = (*UserService)(&c.common)
 	c.Light = (*LightService)(&c.common)
+	c.Group = (*GroupService)(&c.common)
 
 	return c, nil
 }
@@ -123,6 +125,7 @@ func NewClient(host, username string, opts *ClientOptions) *Client {
 	c.Verbose = true // TODO: Make it configurable
 	c.User = (*UserService)(&c.common)
 	c.Light = (*LightService)(&c.common)
+	c.Group = (*GroupService)(&c.common)
 
 	return c
 }

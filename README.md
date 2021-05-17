@@ -50,7 +50,7 @@ import "github.com/firstthumb/go-hue"
 Use existing user and access Hue services. For example:
 
 ```Go
-client := hue.NewClient("<BRIDGE_HOST>", "<YOUR USER TOKEN>")
+client := hue.NewClient("<BRIDGE_HOST>", "<YOUR USER TOKEN>", nil)
 lights, resp, err := client.Light.GetAll(context.Background())
 ```
 
@@ -66,8 +66,13 @@ Currently the following services are supported:
   - [x] Set light attributes (rename)
   - [x] Set light state
   - [x] Delete lights
-- [x] [Groups API](https://developers.meethue.com/develop/hue-api/groupds-api/)
-  - [ ] Get all groups
+- [ ] [Groups API](https://developers.meethue.com/develop/hue-api/groupds-api/)
+  - [x] Get all groups
+  - [ ] Create group
+  - [ ] Get group attributes
+  - [ ] Set group attributes
+  - [ ] Set group state
+  - [ ] Delete group
 
 ## Show your support
 
