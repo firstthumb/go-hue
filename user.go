@@ -12,13 +12,13 @@ type User struct {
 }
 
 func (s *UserService) Login(ctx context.Context, username string) (*User, *Response, error) {
-	req, err := s.client.NewRequest(http.MethodGet, username, nil)
+	req, err := s.client.newRequest(http.MethodGet, username, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	uResp := new(User)
-	resp, err := s.client.Do(ctx, req, uResp)
+	resp, err := s.client.do(ctx, req, uResp)
 	if err != nil {
 		return nil, resp, err
 	}

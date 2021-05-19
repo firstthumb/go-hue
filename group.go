@@ -16,13 +16,13 @@ const groupServiceName = "groups"
 
 // GetAll returns all groups
 func (s *GroupService) GetAll(ctx context.Context) ([]*Group, *Response, error) {
-	req, err := s.client.NewRequest(http.MethodGet, path(groupServiceName, s.client.Username), nil)
+	req, err := s.client.newRequest(http.MethodGet, path(groupServiceName, s.client.clientId), nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	parsed := new(map[string]*Group)
-	resp, err := s.client.Do(ctx, req, parsed)
+	resp, err := s.client.do(ctx, req, parsed)
 	if err != nil {
 		return nil, resp, err
 	}

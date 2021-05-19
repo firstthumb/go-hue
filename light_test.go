@@ -189,15 +189,14 @@ func TestLightService_Delete(t *testing.T) {
 	client, mux, _, teardown := setup()
 	defer teardown()
 
-	bytes, _ := ioutil.ReadFile("testdata/Light_SetState.json")
-	mux.HandleFunc("/username/lights/1/state", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/username/lights/1", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "DELETE")
 		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprint(w, string(bytes))
+		fmt.Fprint(w, string(""))
 	})
 
 	ctx := context.Background()
-	got, _, err := client.Light.Delete(ctx, "1")
+	got, resp, err := client.Light.Delete(ctx, "1")
 	if err != nil {
 		t.Errorf("Light.Delete returned error: %v", err)
 	}
@@ -206,5 +205,9 @@ func TestLightService_Delete(t *testing.T) {
 
 	if !cmp.Equal(got, want) {
 		t.Errorf("Light.Delete returned %+v, want %+v", got, want)
+	}
+
+	if !cmp.Equal(resp.StatusCode, http.StatusOK) {
+		t.Errorf("Light.Delete returned status code %+v, want %+v", resp.StatusCode, http.StatusOK)
 	}
 }

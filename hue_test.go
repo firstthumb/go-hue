@@ -23,9 +23,8 @@ func setup() (client *Client, mux *http.ServeMux, serverURL string, teardown fun
 
 	server := httptest.NewServer(apiHandler)
 
-	client = NewClient("localhost", "username", nil)
-	url, _ := url.Parse(server.URL + baseURLPath + "/")
-	client.BaseURL = url
+	url, _ := url.Parse(server.URL)
+	client = NewClient(url.Host, "username", &ClientOptions{Verbose: true})
 
 	return client, mux, server.URL, server.Close
 }
