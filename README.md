@@ -80,13 +80,13 @@ Currently the following services are supported:
   - [x] Set light attributes (rename)
   - [x] Set light state
   - [x] Delete lights
-- [ ] [Groups API](https://developers.meethue.com/develop/hue-api/groupds-api/)
+- [x] [Groups API](https://developers.meethue.com/develop/hue-api/groupds-api/)
   - [x] Get all groups
-  - [ ] Create group
-  - [ ] Get group attributes
-  - [ ] Set group attributes
-  - [ ] Set group state
-  - [ ] Delete group
+  - [x] Create group
+  - [x] Get group attributes
+  - [x] Set group attributes
+  - [x] Set group state
+  - [x] Delete group
 
 ## Show your support
 
