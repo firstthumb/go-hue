@@ -20,7 +20,7 @@ import (
 
 const (
 	defaultBasePath = "api/"
-	userAgent       = "gohue"
+	userAgent       = "go-hue"
 	discoveryUrl    = "https://discovery.meethue.com/"
 )
 
@@ -41,7 +41,7 @@ type ApiError struct {
 	Description string `json:"description"`
 }
 
-type DiscoverResponse struct {
+type discoverResponse struct {
 	ID   string `json:"id"`
 	Host string `json:"internalipaddress"`
 }
@@ -83,7 +83,7 @@ func Discover() (string, error) {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 
-	discoveryResponses := new([]DiscoverResponse)
+	discoveryResponses := new([]discoverResponse)
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return "", err
@@ -135,6 +135,63 @@ func NewClient(host, clientId string, opts *ClientOptions) *Client {
 	c.Group = (*GroupService)(&c.common)
 
 	return c
+}
+
+// CreateUser creates user on the bridge and returns authenticated client instance
+// Don't forget to press bridge button otherwise it will fail
+func CreateUser(host, deviceType string, opts *ClientOptions) (*Client, error) {
+	buf := &bytes.Buffer{}
+	err := json.NewEncoder(buf).Encode(&createUserRequest{DeviceType: deviceType})
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("http://%s/api", host), buf)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+
+	apiResponses := new([]ApiResponse)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New("invalid status code returned")
+	}
+
+	bytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(bytes, apiResponses)
+	if err != nil {
+		return nil, err
+	}
+
+	if apiResponses == nil || len(*apiResponses) == 0 || (*apiResponses)[0].Error != nil {
+		return nil, errors.New((*apiResponses)[0].Error.Description)
+	}
+
+	clientId := (*apiResponses)[0].Success["username"].(string)
+
+	return NewClient(host, clientId, opts), nil
+}
+
+// GetHost returns ip address of hue bridge
+func (c *Client) GetHost() string {
+	return c.baseURL.Host
+}
+
+// GetClientID returns clientID of current client
+func (c *Client) GetClientID() string {
+	return c.clientId
 }
 
 func (c *Client) newRequest(method, url string, payload interface{}) (*http.Request, error) {
@@ -208,70 +265,6 @@ func (c *Client) do(ctx context.Context, req *http.Request, v interface{}) (*Res
 		}
 	}
 	return &Response{Response: resp}, err
-}
-
-// Login verifies that clientId exists
-func (c *Client) Login(clientId string) *Client {
-	c.clientId = clientId
-
-	// TODO: Make a request to verify user login
-
-	return c
-}
-
-func CreateUser(host, deviceType string, opts *ClientOptions) (*Client, error) {
-	buf := &bytes.Buffer{}
-	err := json.NewEncoder(buf).Encode(&createUserRequest{DeviceType: deviceType})
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("http://%s/api", host), buf)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Accept", "application/json")
-
-	apiResponses := new([]ApiResponse)
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("invalid status code returned")
-	}
-
-	bytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	err = json.Unmarshal(bytes, apiResponses)
-	if err != nil {
-		return nil, err
-	}
-
-	if apiResponses == nil || len(*apiResponses) == 0 || (*apiResponses)[0].Error != nil {
-		return nil, errors.New((*apiResponses)[0].Error.Description)
-	}
-
-	clientId := (*apiResponses)[0].Success["username"].(string)
-
-	return NewClient(host, clientId, opts), nil
-}
-
-// GetHost returns ip address of hue bridge
-func (c *Client) GetHost() string {
-	return c.baseURL.Host
-}
-
-// GetClientID returns clientID of current client
-func (c *Client) GetClientID() string {
-	return c.clientId
 }
 
 func path(service string, params ...string) string {

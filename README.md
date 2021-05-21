@@ -50,9 +50,23 @@ import "github.com/firstthumb/go-hue"
 Use existing user and access Hue services. For example:
 
 ```Go
-client := hue.NewClient("<BRIDGE_HOST>", "<YOUR USER TOKEN>", nil)
+// Discover your network and finds the first bridge
+host, _ := hue.Discover()
+client := hue.NewClient(host, "<YOUR USER TOKEN>", nil)
 lights, resp, err := client.Light.GetAll(context.Background())
 ```
+
+Or create user. Don't forget to save the clientId 
+
+```Go
+// You must press Philips Hue bridge button before
+host, _ := hue.Discover()
+client, _ := hue.CreateUser(host, "<CLIENT_NAME>", nil)
+client.GetClientID() // Save clientID for next time
+lights, resp, err := client.Light.GetAll(context.Background())
+```
+
+[More Examples](https://github.com/firstthumb/go-hue/tree/main/example)
 
 ## Coverage
 

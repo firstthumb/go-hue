@@ -1,0 +1,23 @@
+{
+  "name": "Room1",
+  "lights": ["2"],
+  "sensors": [],
+  "type": "Room",
+  "state": {
+    "all_on": false,
+    "any_on": false
+  },
+  "recycle": false,
+  "class": "Living room",
+  "action": {
+    "on": false,
+    "bri": 94,
+    "hue": 8402,
+    "sat": 140,
+    "effect": "none",
+    "xy": [0.4575, 0.4099],
+    "ct": 366,
+    "alert": "select",
+    "colormode": "xy"
+  }
+}

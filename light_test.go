@@ -29,7 +29,7 @@ func TestLightService_GetAll(t *testing.T) {
 	ctx := context.Background()
 	lights, _, err := client.Light.GetAll(ctx)
 	if err != nil {
-		t.Errorf("Lights.GetAll returned error: %v", err)
+		t.Errorf("Lights.GetAll returned error: %+v", err)
 	}
 	var result map[string]*Light
 	json.Unmarshal(bytes, &result)
@@ -63,7 +63,7 @@ func TestLightService_Get(t *testing.T) {
 	ctx := context.Background()
 	light, _, err := client.Light.Get(ctx, "1")
 	if err != nil {
-		t.Errorf("Light.Get returned error: %v", err)
+		t.Errorf("Light.Get returned error: %+v", err)
 	}
 	want := &Light{}
 	json.Unmarshal(bytes, want)
@@ -87,7 +87,7 @@ func TestLightService_GetNew(t *testing.T) {
 	ctx := context.Background()
 	lights, _, err := client.Light.GetNew(ctx)
 	if err != nil {
-		t.Errorf("Light.GetNew returned error: %v", err)
+		t.Errorf("Light.GetNew returned error: %+v", err)
 	}
 
 	want := []*Light{
@@ -116,7 +116,7 @@ func TestLightService_Search(t *testing.T) {
 	ctx := context.Background()
 	got, _, err := client.Light.Search(ctx)
 	if err != nil {
-		t.Errorf("Light.Search returned error: %v", err)
+		t.Errorf("Light.Search returned error: %+v", err)
 	}
 
 	want := true
@@ -140,7 +140,7 @@ func TestLightService_Rename(t *testing.T) {
 	ctx := context.Background()
 	got, _, err := client.Light.Rename(ctx, "1", "new_name")
 	if err != nil {
-		t.Errorf("Light.Rename returned error: %v", err)
+		t.Errorf("Light.Rename returned error: %+v", err)
 	}
 
 	want := true
@@ -162,9 +162,9 @@ func TestLightService_SetState(t *testing.T) {
 	})
 
 	ctx := context.Background()
-	got, _, err := client.Light.SetState(ctx, "1", &SetStateRequest{On: Bool(false), Bri: UInt8(200)})
+	got, _, err := client.Light.SetState(ctx, "1", SetStateParams{On: Bool(false), Bri: UInt8(200)})
 	if err != nil {
-		t.Errorf("Light.SetState returned error: %v", err)
+		t.Errorf("Light.SetState returned error: %+v", err)
 	}
 
 	want := []*ApiResponse{
@@ -198,7 +198,7 @@ func TestLightService_Delete(t *testing.T) {
 	ctx := context.Background()
 	got, resp, err := client.Light.Delete(ctx, "1")
 	if err != nil {
-		t.Errorf("Light.Delete returned error: %v", err)
+		t.Errorf("Light.Delete returned error: %+v", err)
 	}
 
 	want := true
