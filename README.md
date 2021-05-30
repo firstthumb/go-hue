@@ -111,8 +111,8 @@ Currently the following services are supported:
   - [x] Set group attributes
   - [x] Set group state
   - [x] Delete group
-- [] [Schedules API](https://developers.meethue.com/develop/hue-api/3-schedules-api/)
-- [] [Scenes API](https://developers.meethue.com/develop/hue-api/4-scenes/)
+- [ ] [Schedules API](https://developers.meethue.com/develop/hue-api/3-schedules-api/)
+- [ ] [Scenes API](https://developers.meethue.com/develop/hue-api/4-scenes/)
 
 ## Show your support
 
