@@ -33,7 +33,7 @@ type updateGroupRequest struct {
 
 // GetAll returns all groups
 func (s *GroupService) GetAll(ctx context.Context) ([]*Group, *Response, error) {
-	req, err := s.client.newRequest(http.MethodGet, path(groupServiceName, s.client.clientId), nil)
+	req, err := s.client.newRequest(http.MethodGet, s.client.path(groupServiceName), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -64,7 +64,7 @@ func (s *GroupService) CreateGroup(ctx context.Context, name string, lights []st
 		Lights: lights,
 		Type:   groupTypeLight,
 	}
-	req, err := s.client.newRequest(http.MethodPost, path(groupServiceName, s.client.clientId), payload)
+	req, err := s.client.newRequest(http.MethodPost, s.client.path(groupServiceName), payload)
 	if err != nil {
 		return "", nil, err
 	}
@@ -93,7 +93,7 @@ func (s *GroupService) CreateRoom(ctx context.Context, name string, lights []str
 		Type:   groupTypeRoom,
 		Class:  String(name),
 	}
-	req, err := s.client.newRequest(http.MethodPost, path(groupServiceName, s.client.clientId), payload)
+	req, err := s.client.newRequest(http.MethodPost, s.client.path(groupServiceName), payload)
 	if err != nil {
 		return "", nil, err
 	}
@@ -116,7 +116,7 @@ func (s *GroupService) CreateRoom(ctx context.Context, name string, lights []str
 
 // Get returns the group by id
 func (s *GroupService) Get(ctx context.Context, id string) (*Group, *Response, error) {
-	req, err := s.client.newRequest(http.MethodGet, path(groupServiceName, s.client.clientId, id), nil)
+	req, err := s.client.newRequest(http.MethodGet, s.client.path(groupServiceName, id), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -137,7 +137,7 @@ func (s *GroupService) Update(ctx context.Context, id string, name *string, ligh
 		Lights: lights,
 		Class:  class,
 	}
-	req, err := s.client.newRequest(http.MethodPut, path(groupServiceName, s.client.clientId, id), payload)
+	req, err := s.client.newRequest(http.MethodPut, s.client.path(groupServiceName, id), payload)
 	if err != nil {
 		return false, nil, err
 	}
@@ -156,8 +156,6 @@ func (s *GroupService) Update(ctx context.Context, id string, name *string, ligh
 	for _, r := range *apiResponses {
 		if r.Error != nil {
 			return false, resp, errors.New(r.Error.Description)
-		} else if s.client.verbose {
-			s.client.logger.Info("%v", (*apiResponses)[0].Success)
 		}
 	}
 
@@ -166,7 +164,7 @@ func (s *GroupService) Update(ctx context.Context, id string, name *string, ligh
 
 // SetState updates state of the group
 func (s *GroupService) SetState(ctx context.Context, id string, payload SetStateParams) ([]*ApiResponse, *Response, error) {
-	req, err := s.client.newRequest(http.MethodPut, path(groupServiceName, s.client.clientId, id, "action"), payload)
+	req, err := s.client.newRequest(http.MethodPut, s.client.path(groupServiceName, id, "action"), payload)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -182,7 +180,7 @@ func (s *GroupService) SetState(ctx context.Context, id string, payload SetState
 
 // Delete removes the group
 func (s *GroupService) Delete(ctx context.Context, id string) (bool, *Response, error) {
-	req, err := s.client.newRequest(http.MethodDelete, path(groupServiceName, s.client.clientId, id), nil)
+	req, err := s.client.newRequest(http.MethodDelete, s.client.path(groupServiceName, id), nil)
 	if err != nil {
 		return false, nil, err
 	}
@@ -195,10 +193,6 @@ func (s *GroupService) Delete(ctx context.Context, id string) (bool, *Response, 
 
 	if apiResponses == nil || len(*apiResponses) == 0 {
 		return false, resp, errors.New("the bridge didn't return valid response")
-	}
-
-	if s.client.verbose {
-		s.client.logger.Info("%s", (*apiResponses)[0]["success"])
 	}
 
 	return true, resp, nil

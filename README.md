@@ -66,12 +66,36 @@ client.GetClientID() // Save clientID for next time
 lights, resp, err := client.Light.GetAll(context.Background())
 ```
 
+Supports remote API
+
+```Go
+// Create your clientId and clientSecret at https://developers.meethue.com/my-apps/
+// set your environment variables HUE_CLIENT_ID, HUE_CLIENT_SECRET and HUE_APP_ID
+// use the same callback url defined in your app
+auth := hue.NewAuthenticator("http://localhost:8181/callback")
+client, err := auth.Authenticate()
+if err != nil {
+  panic(err)
+}
+	
+username, err := client.CreateRemoteUser()
+if err != nil {
+  panic(err)
+}
+	
+client.Login(username)
+result, _, _ := client.Light.GetAll(context.Background())
+lights, _ := json.Marshal(result)
+fmt.Println(string(lights))
+```
+
 [More Examples](https://github.com/firstthumb/go-hue/tree/main/example)
 
 ## Coverage
 
 Currently the following services are supported:
 
+- [x] [Remote API](https://developers.meethue.com/develop/hue-api/remote-api-quick-start-guide/)
 - [x] [Lights API](https://developers.meethue.com/develop/hue-api/lights-api/)
   - [x] Get all lights
   - [x] Get new lights
@@ -87,6 +111,8 @@ Currently the following services are supported:
   - [x] Set group attributes
   - [x] Set group state
   - [x] Delete group
+- [] [Schedules API](https://developers.meethue.com/develop/hue-api/3-schedules-api/)
+- [] [Scenes API](https://developers.meethue.com/develop/hue-api/4-scenes/)
 
 ## Show your support
 

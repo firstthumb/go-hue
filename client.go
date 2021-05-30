@@ -9,7 +9,6 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-	"net/http/httputil"
 	"net/url"
 	"strings"
 
@@ -51,11 +50,11 @@ type createUserRequest struct {
 }
 
 type Client struct {
-	client    *http.Client
-	baseURL   *url.URL
+	client  *http.Client
+	baseURL *url.URL
+
 	userAgent string
-	clientId  string
-	verbose   bool
+	clientId  string // username for hue bridge
 	logger    logr.Logger
 	common    service
 
@@ -70,7 +69,11 @@ type service struct {
 
 type ClientOptions struct {
 	HttpClient *http.Client
-	Verbose    bool
+	LogLevel   logrus.Level
+}
+
+func init() {
+	logrus.SetLevel(logrus.DebugLevel)
 }
 
 // Discover gets hue bridge host address
@@ -112,7 +115,7 @@ func Discover() (string, error) {
 	return (*discoveryResponses)[0].Host, nil
 }
 
-func NewClient(host, clientId string, opts *ClientOptions) *Client {
+func newClient(host string, opts *ClientOptions) (*Client, error) {
 	var httpClient *http.Client
 	if opts == nil || opts.HttpClient == nil {
 		httpClient = &http.Client{} // Create default client
@@ -120,24 +123,44 @@ func NewClient(host, clientId string, opts *ClientOptions) *Client {
 		httpClient = opts.HttpClient
 	}
 
-	baseURL := &url.URL{Scheme: "http", Host: host, Path: defaultBasePath}
-
-	c := &Client{client: httpClient, baseURL: baseURL, userAgent: userAgent, clientId: clientId}
-	c.logger = logrusr.NewLogger(logrus.New()) // TODO: Make it configurable
-	c.common.client = c
-	if opts != nil {
-		c.verbose = opts.Verbose
-	} else {
-		c.verbose = false
+	u, err := url.Parse(host)
+	if err != nil {
+		return nil, err
 	}
+
+	c := &Client{client: httpClient, baseURL: u, userAgent: userAgent}
+	c.logger = logrusr.NewLogger(logrus.New())
+	c.common.client = c
+
 	c.User = (*UserService)(&c.common)
 	c.Light = (*LightService)(&c.common)
 	c.Group = (*GroupService)(&c.common)
 
+	return c, nil
+}
+
+func NewClient(host, clientId string, opts *ClientOptions) *Client {
+	c, err := newClient(fmt.Sprintf("http://%v/api/", host), opts)
+	if err != nil {
+		c.logger.Error(err, "Couldn't create client")
+		return nil
+	}
+	c.clientId = clientId
+
 	return c
 }
 
-// CreateUser creates user on the bridge and returns authenticated client instance
+func NewClientRemote(opts *ClientOptions) *Client {
+	c, err := newClient("https://api.meethue.com/v2/", opts)
+	if err != nil {
+		c.logger.Error(err, "Couldn't create client")
+		return nil
+	}
+
+	return c
+}
+
+// CreateUser creates local user on the bridge and returns authenticated client instance
 // Don't forget to press bridge button otherwise it will fail
 func CreateUser(host, deviceType string, opts *ClientOptions) (*Client, error) {
 	buf := &bytes.Buffer{}
@@ -198,10 +221,13 @@ func (c *Client) newRequest(method, url string, payload interface{}) (*http.Requ
 	if !strings.HasSuffix(c.baseURL.Path, "/") {
 		return nil, fmt.Errorf("BaseURL must have a trailing slash, but %q does not", c.baseURL)
 	}
+	fmt.Printf("BASE URL => %v\n", c.baseURL)
+	fmt.Printf("URL => %v\n", url)
 	u, err := c.baseURL.Parse(url)
 	if err != nil {
 		return nil, err
 	}
+	fmt.Printf("FINAL => %v\n", u)
 
 	var buf io.ReadWriter
 	if payload != nil {
@@ -235,21 +261,11 @@ func (c *Client) do(ctx context.Context, req *http.Request, v interface{}) (*Res
 	}
 	req = req.WithContext(ctx)
 
-	if c.verbose {
-		body, _ := httputil.DumpRequest(req, true)
-		c.logger.Info(string(body))
-	}
-
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return &Response{Response: resp}, err
 	}
 	defer resp.Body.Close()
-
-	if c.verbose {
-		body, _ := httputil.DumpResponse(resp, true)
-		c.logger.Info(string(body))
-	}
 
 	switch v := v.(type) {
 	case nil:
@@ -267,12 +283,15 @@ func (c *Client) do(ctx context.Context, req *http.Request, v interface{}) (*Res
 	return &Response{Response: resp}, err
 }
 
-func path(service string, params ...string) string {
-	if len(params) == 1 {
-		return fmt.Sprintf("%v/%v", params[0], service)
-	} else if len(params) == 2 {
-		return fmt.Sprintf("%v/%v/%v", params[0], service, params[1])
+func (c *Client) path(service string, params ...string) string {
+	if c.clientId == "" {
+		c.logger.Info("clientId is missing")
+	}
+	if len(params) == 0 {
+		return fmt.Sprintf("%v/%v", c.clientId, service)
+	} else if len(params) == 1 {
+		return fmt.Sprintf("%v/%v/%v", c.clientId, service, params[0])
 	}
 
-	return fmt.Sprintf("%v/%v/%v/%v", params[0], service, params[1], params[2])
+	return fmt.Sprintf("%v/%v/%v/%v", c.clientId, service, params[0], params[1])
 }

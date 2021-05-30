@@ -5,6 +5,8 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"testing"
+
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -24,7 +26,7 @@ func setup() (client *Client, mux *http.ServeMux, serverURL string, teardown fun
 	server := httptest.NewServer(apiHandler)
 
 	url, _ := url.Parse(server.URL)
-	client = NewClient(url.Host, "username", &ClientOptions{Verbose: true})
+	client = NewClient(url.Host, "username", &ClientOptions{LogLevel: logrus.DebugLevel})
 
 	return client, mux, server.URL, server.Close
 }
