@@ -221,13 +221,10 @@ func (c *Client) newRequest(method, url string, payload interface{}) (*http.Requ
 	if !strings.HasSuffix(c.baseURL.Path, "/") {
 		return nil, fmt.Errorf("BaseURL must have a trailing slash, but %q does not", c.baseURL)
 	}
-	fmt.Printf("BASE URL => %v\n", c.baseURL)
-	fmt.Printf("URL => %v\n", url)
 	u, err := c.baseURL.Parse(url)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("FINAL => %v\n", u)
 
 	var buf io.ReadWriter
 	if payload != nil {
