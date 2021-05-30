@@ -18,7 +18,7 @@ import (
 const (
 	AuthURL  = "https://api.meethue.com/oauth2/auth"
 	TokenURL = "https://api.meethue.com/oauth2/token"
-	AppID    = "huec"
+	ApiURL   = "https://api.meethue.com/bridge/"
 )
 
 type Authenticator struct {
@@ -31,13 +31,14 @@ func init() {
 }
 
 func NewAuthenticator(redirectURL string) Authenticator {
+	appID := os.Getenv("HUE_APP_ID")
 	cfg := &oauth2.Config{
 		ClientID:     os.Getenv("HUE_CLIENT_ID"),
 		ClientSecret: os.Getenv("HUE_CLIENT_SECRET"),
 		RedirectURL:  redirectURL,
 		Scopes:       []string{},
 		Endpoint: oauth2.Endpoint{
-			AuthURL:  fmt.Sprintf("%s?appid=%s&deviceid=%s&devicename=browser", AuthURL, AppID, AppID),
+			AuthURL:  fmt.Sprintf("%s?appid=%s&deviceid=%s&devicename=browser", AuthURL, appID, appID),
 			TokenURL: TokenURL,
 		},
 	}
@@ -214,7 +215,7 @@ func (c *Client) AddWhitelistIdentifier() (string, error) {
 
 func (a *Authenticator) NewClient(token *oauth2.Token) *Client {
 	httpClient := a.config.Client(a.context, token)
-	client, err := newClient("https://api.meethue.com/bridge/", &ClientOptions{HttpClient: httpClient})
+	client, err := newClient(ApiURL, &ClientOptions{HttpClient: httpClient})
 	if err != nil {
 		return nil
 	}
