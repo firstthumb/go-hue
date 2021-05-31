@@ -58,9 +58,8 @@ type Client struct {
 	logger    logr.Logger
 	common    service
 
-	User  *UserService
-	Light *LightService
-	Group *GroupService
+	Lights *LightService
+	Groups *GroupService
 }
 
 type service struct {
@@ -70,10 +69,6 @@ type service struct {
 type ClientOptions struct {
 	HttpClient *http.Client
 	LogLevel   logrus.Level
-}
-
-func init() {
-	logrus.SetLevel(logrus.DebugLevel)
 }
 
 // Discover gets hue bridge host address
@@ -132,9 +127,8 @@ func newClient(host string, opts *ClientOptions) (*Client, error) {
 	c.logger = logrusr.NewLogger(logrus.New())
 	c.common.client = c
 
-	c.User = (*UserService)(&c.common)
-	c.Light = (*LightService)(&c.common)
-	c.Group = (*GroupService)(&c.common)
+	c.Lights = (*LightService)(&c.common)
+	c.Groups = (*GroupService)(&c.common)
 
 	return c, nil
 }

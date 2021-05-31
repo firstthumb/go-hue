@@ -11,21 +11,21 @@ import (
 )
 
 type SetStateParams struct {
-	On             *bool      `json:"on,omitempty"`
-	Bri            *uint8     `json:"bri,omitempty"`
-	Hue            *uint16    `json:"hue,omitempty"`
-	Sat            *uint8     `json:"sat,omitempty"`
-	Effect         *string    `json:"effect,omitempty"`
-	XY             *[]float64 `json:"xy,omitempty"`
-	CT             *uint16    `json:"ct,omitempty"`
-	Alert          *string    `json:"alert,omitempty"`
-	TransitionTime *uint16    `json:"transitiontime,omitempty"`
-	BriInc         *uint8     `json:"bri_inc,omitempty"`
-	SatInc         *uint8     `json:"sat_inc,omitempty"`
-	HueInc         *uint16    `json:"hue_inc,omitempty"`
-	CtInc          *uint16    `json:"ct_inc,omitempty"`
-	XYInc          *[]float32 `json:"xy_inc,omitempty"`
-	Scene          *string    `json:"scene,omitempty"`
+	On             *bool     `json:"on,omitempty"`
+	Bri            *uint8    `json:"bri,omitempty"`
+	Hue            *uint16   `json:"hue,omitempty"`
+	Sat            *uint8    `json:"sat,omitempty"`
+	Effect         *string   `json:"effect,omitempty"`
+	XY             []float64 `json:"xy,omitempty"`
+	CT             *uint16   `json:"ct,omitempty"`
+	Alert          *string   `json:"alert,omitempty"`
+	TransitionTime *uint16   `json:"transitiontime,omitempty"`
+	BriInc         *uint8    `json:"bri_inc,omitempty"`
+	SatInc         *uint8    `json:"sat_inc,omitempty"`
+	HueInc         *uint16   `json:"hue_inc,omitempty"`
+	CtInc          *uint16   `json:"ct_inc,omitempty"`
+	XYInc          []float32 `json:"xy_inc,omitempty"`
+	Scene          *string   `json:"scene,omitempty"`
 }
 
 // LightService has functions for groups
@@ -33,74 +33,74 @@ type LightService service
 
 const lightServiceName = "lights"
 
-type renameRequest struct {
-	Name string `json:"name"`
+func (s *LightService) lightServicePath(params ...string) string {
+	return s.client.path(lightServiceName, params...)
 }
 
 // GetAll returns a list of all lights that have been discovered by the bridge.
 func (s *LightService) GetAll(ctx context.Context) ([]*Light, *Response, error) {
-	req, err := s.client.newRequest(http.MethodGet, s.client.path(lightServiceName), nil)
+	req, err := s.client.newRequest(http.MethodGet, s.lightServicePath(), nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	parsed := new(map[string]*Light)
-	resp, err := s.client.do(ctx, req, parsed)
+	lights := make(map[string]*Light)
+	resp, err := s.client.do(ctx, req, &lights)
 	if err != nil {
 		return nil, resp, err
 	}
 
-	for i, l := range *parsed {
-		id, _ := strconv.Atoi(i)
-		l.ID = &id
+	for k, l := range lights {
+		id, _ := strconv.Atoi(k)
+		l.ID = id
 	}
 
-	result := funk.Values(*parsed).([]*Light)
-	sort.Slice(result, func(i, j int) bool {
-		return *result[i].ID < *result[j].ID
+	orderedLights := funk.Values(lights).([]*Light)
+	sort.Slice(orderedLights, func(i, j int) bool {
+		return orderedLights[i].GetID() < orderedLights[j].GetID()
 	})
 
-	return result, resp, nil
+	return orderedLights, resp, nil
 }
 
 // Get returns light by id
 func (s *LightService) Get(ctx context.Context, id string) (*Light, *Response, error) {
-	req, err := s.client.newRequest(http.MethodGet, s.client.path(lightServiceName, id), nil)
+	req, err := s.client.newRequest(http.MethodGet, s.lightServicePath(id), nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	parsed := new(Light)
-	resp, err := s.client.do(ctx, req, parsed)
+	light := new(Light)
+	resp, err := s.client.do(ctx, req, light)
 	if err != nil {
 		return nil, resp, err
 	}
 
-	return parsed, resp, nil
+	return light, resp, nil
 }
 
 // GetNew returns a list of lights that were discovered the last time a search for new lights was performed.
 func (s *LightService) GetNew(ctx context.Context) ([]*Light, *Response, error) {
-	req, err := s.client.newRequest(http.MethodGet, s.client.path(lightServiceName, "new"), nil)
+	req, err := s.client.newRequest(http.MethodGet, s.lightServicePath("new"), nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	parsed := new(map[string]interface{})
-	resp, err := s.client.do(ctx, req, parsed)
+	parsed := make(map[string]interface{})
+	resp, err := s.client.do(ctx, req, &parsed)
 	if err != nil {
 		return nil, resp, err
 	}
 
 	lights := []*Light{}
-	for i, l := range *parsed {
-		if i == "lastscan" {
+	for k, l := range parsed {
+		if k == "lastscan" {
 			// Skip lastscan
 		} else {
 			light := &Light{}
-			id, _ := strconv.Atoi(i)
-			light.ID = &id
-			light.Name = String(l.(map[string]interface{})["name"].(string))
+			id, _ := strconv.Atoi(k)
+			light.ID = id
+			light.Name = l.(map[string]interface{})["name"].(string)
 			lights = append(lights, light)
 		}
 	}
@@ -111,7 +111,7 @@ func (s *LightService) GetNew(ctx context.Context) ([]*Light, *Response, error) 
 // Search starts searching for new lights
 // The bridge will open the network for 40s.
 func (s *LightService) Search(ctx context.Context) (bool, *Response, error) {
-	req, err := s.client.newRequest(http.MethodPost, s.client.path(lightServiceName), nil)
+	req, err := s.client.newRequest(http.MethodPost, s.lightServicePath(), nil)
 	if err != nil {
 		return false, nil, err
 	}
@@ -131,8 +131,10 @@ func (s *LightService) Search(ctx context.Context) (bool, *Response, error) {
 
 // Rename lights
 func (s *LightService) Rename(ctx context.Context, id, name string) (bool, *Response, error) {
-	payload := &renameRequest{name}
-	req, err := s.client.newRequest(http.MethodPut, s.client.path(lightServiceName, id), payload)
+	var payload = struct {
+		Name string `json:"name"`
+	}{name}
+	req, err := s.client.newRequest(http.MethodPut, s.lightServicePath(id), payload)
 	if err != nil {
 		return false, nil, err
 	}
@@ -152,23 +154,23 @@ func (s *LightService) Rename(ctx context.Context, id, name string) (bool, *Resp
 
 // SetState allows the user to turn the light on and off, modify the hue and effects.
 func (s *LightService) SetState(ctx context.Context, id string, payload SetStateParams) ([]*ApiResponse, *Response, error) {
-	req, err := s.client.newRequest(http.MethodPut, s.client.path(lightServiceName, id, "state"), payload)
+	req, err := s.client.newRequest(http.MethodPut, s.lightServicePath(id, "state"), payload)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	apiResponses := new([]*ApiResponse)
-	resp, err := s.client.do(ctx, req, apiResponses)
+	apiResponses := []*ApiResponse{}
+	resp, err := s.client.do(ctx, req, &apiResponses)
 	if err != nil {
 		return nil, resp, err
 	}
 
-	return *apiResponses, resp, nil
+	return apiResponses, resp, nil
 }
 
 // Delete a light from the bridge.
 func (s *LightService) Delete(ctx context.Context, id string) (bool, *Response, error) {
-	req, err := s.client.newRequest(http.MethodDelete, s.client.path(lightServiceName, id), nil)
+	req, err := s.client.newRequest(http.MethodDelete, s.lightServicePath(id), nil)
 	if err != nil {
 		return false, nil, err
 	}

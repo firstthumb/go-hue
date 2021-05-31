@@ -22,7 +22,7 @@ func main() {
 	// Save "username" for next usage
 	// username := "S8uATAguQtowBJnTPpMr8q8nDkskQ6hHbdfAUn1C"
 	client.Login(username)
-	result, _, _ := client.Light.GetAll(context.Background())
+	result, _, _ := client.Lights.GetAll(context.Background())
 	lights, _ := json.Marshal(result)
 	fmt.Println(string(lights))
 }

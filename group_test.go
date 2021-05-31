@@ -26,7 +26,7 @@ func TestGroupService_GetAll(t *testing.T) {
 	})
 
 	ctx := context.Background()
-	groups, _, err := client.Group.GetAll(ctx)
+	groups, _, err := client.Groups.GetAll(ctx)
 	if err != nil {
 		t.Errorf("Group.GetAll returned error: %+v", err)
 	}
@@ -35,12 +35,12 @@ func TestGroupService_GetAll(t *testing.T) {
 
 	for i, g := range result {
 		id, _ := strconv.Atoi(i)
-		g.ID = &id
+		g.ID = id
 	}
 
 	want := funk.Values(result).([]*Group)
 	sort.Slice(want, func(i, j int) bool {
-		return *want[i].ID < *want[j].ID
+		return want[i].ID < want[j].ID
 	})
 
 	if !reflect.DeepEqual(groups, want) {
@@ -61,7 +61,7 @@ func TestGroupService_Get(t *testing.T) {
 	})
 
 	ctx := context.Background()
-	got, _, err := client.Group.Get(ctx, groupId)
+	got, _, err := client.Groups.Get(ctx, groupId)
 	if err != nil {
 		t.Errorf("Group.Get returned error: %+v", err)
 	}
@@ -86,7 +86,7 @@ func TestGroupService_Update(t *testing.T) {
 	})
 
 	ctx := context.Background()
-	got, _, err := client.Group.Update(ctx, groupId, String("Bedroom"), Slice([]string{"1"}), nil)
+	got, _, err := client.Groups.Update(ctx, groupId, String("Bedroom"), []string{"1"}, nil)
 	if err != nil {
 		t.Errorf("Group.Update returned error: %+v", err)
 	}
@@ -110,7 +110,7 @@ func TestGroupService_SetState(t *testing.T) {
 	})
 
 	ctx := context.Background()
-	got, _, err := client.Group.SetState(ctx, groupId, SetStateParams{On: Bool(true)})
+	got, _, err := client.Groups.SetState(ctx, groupId, SetStateParams{On: Bool(true)})
 	if err != nil {
 		t.Errorf("Group.SetState returned error: %+v", err)
 	}
@@ -141,7 +141,7 @@ func TestGroupService_Delete(t *testing.T) {
 	})
 
 	ctx := context.Background()
-	got, _, err := client.Group.Delete(ctx, groupId)
+	got, _, err := client.Groups.Delete(ctx, groupId)
 	if err != nil {
 		t.Errorf("Group.Delete returned error: %+v", err)
 	}

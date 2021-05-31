@@ -1,98 +1,98 @@
 package hue
 
 func (l *Light) GetID() int {
-	return *l.ID
+	return l.ID
 }
 
 func (l *Light) GetName() string {
-	if l == nil || l.Name == nil {
+	if l == nil {
 		return ""
 	}
-	return *l.Name
+	return l.Name
 }
 
 func (l *Light) GetType() string {
-	if l == nil || l.Type == nil {
+	if l == nil {
 		return ""
 	}
-	return *l.Type
+	return l.Type
 }
 
 // State
 
 func (l *Light) IsOn() bool {
-	if l == nil || l.State == nil || l.State.On == nil {
+	if l == nil {
 		return false
 	}
-	return *l.State.On
+	return l.State.On
 }
 
 func (l *Light) GetEffect() string {
-	if l == nil || l.State == nil || l.State.Effect == nil {
+	if l == nil {
 		return ""
 	}
-	return *l.State.Effect
+	return l.State.Effect
 }
 
 func (l *Light) GetBri() uint8 {
-	if l == nil || l.State == nil || l.State.Bri == nil {
+	if l == nil {
 		return 0
 	}
-	return *l.State.Bri
+	return l.State.Bri
 }
 
 func (l *Light) GetSat() uint8 {
-	if l == nil || l.State == nil || l.State.Sat == nil {
+	if l == nil {
 		return 0
 	}
-	return *l.State.Sat
+	return l.State.Sat
 }
 
 func (l *Light) GetCT() uint16 {
-	if l == nil || l.State == nil || l.State.CT == nil {
+	if l == nil {
 		return 0
 	}
-	return *l.State.CT
+	return l.State.CT
 }
 
 func (l *Light) GetXY() []float32 {
-	if l == nil || l.State == nil || l.State.XY == nil {
+	if l == nil {
 		return []float32{}
 	}
 	return l.State.XY
 }
 
 func (l *Light) GetAlert() string {
-	if l == nil || l.State == nil || l.State.Alert == nil {
+	if l == nil {
 		return ""
 	}
-	return *l.State.Alert
+	return l.State.Alert
 }
 
 func (l *Light) GetTransitionTime() uint16 {
-	if l == nil || l.State == nil || l.State.TransitionTime == nil {
+	if l == nil {
 		return 0
 	}
-	return *l.State.TransitionTime
+	return l.State.TransitionTime
 }
 
 func (l *Light) IsReachable() bool {
-	if l == nil || l.State == nil || l.State.Reachable == nil {
+	if l == nil {
 		return false
 	}
-	return *l.State.Reachable
+	return l.State.Reachable
 }
 
 func (l *Light) GetColorMode() string {
-	if l == nil || l.State == nil || l.State.ColorMode == nil {
+	if l == nil {
 		return ""
 	}
-	return *l.State.ColorMode
+	return l.State.ColorMode
 }
 
 func (l *Light) GetMode() string {
-	if l == nil || l.State == nil || l.State.Mode == nil {
+	if l == nil {
 		return ""
 	}
-	return *l.State.Mode
+	return l.State.Mode
 }

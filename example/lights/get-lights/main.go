@@ -31,7 +31,7 @@ func main() {
 	}
 
 	client := hue.NewClient(host, *clientID, nil)
-	result, _, _ := client.Light.GetAll(context.Background())
+	result, _, _ := client.Lights.GetAll(context.Background())
 	lights, _ := json.Marshal(result)
 	fmt.Println(string(lights))
 }

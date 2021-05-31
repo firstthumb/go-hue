@@ -27,7 +27,7 @@ func TestLightService_GetAll(t *testing.T) {
 	})
 
 	ctx := context.Background()
-	lights, _, err := client.Light.GetAll(ctx)
+	lights, _, err := client.Lights.GetAll(ctx)
 	if err != nil {
 		t.Errorf("Lights.GetAll returned error: %+v", err)
 	}
@@ -36,12 +36,12 @@ func TestLightService_GetAll(t *testing.T) {
 
 	for i, l := range result {
 		id, _ := strconv.Atoi(i)
-		l.ID = &id
+		l.ID = id
 	}
 
 	want := funk.Values(result).([]*Light)
 	sort.Slice(want, func(i, j int) bool {
-		return *want[i].ID < *want[j].ID
+		return want[i].ID < want[j].ID
 	})
 
 	if !reflect.DeepEqual(lights, want) {
@@ -61,7 +61,7 @@ func TestLightService_Get(t *testing.T) {
 	})
 
 	ctx := context.Background()
-	light, _, err := client.Light.Get(ctx, "1")
+	light, _, err := client.Lights.Get(ctx, "1")
 	if err != nil {
 		t.Errorf("Light.Get returned error: %+v", err)
 	}
@@ -85,15 +85,15 @@ func TestLightService_GetNew(t *testing.T) {
 	})
 
 	ctx := context.Background()
-	lights, _, err := client.Light.GetNew(ctx)
+	lights, _, err := client.Lights.GetNew(ctx)
 	if err != nil {
 		t.Errorf("Light.GetNew returned error: %+v", err)
 	}
 
 	want := []*Light{
 		{
-			ID:   Int(8),
-			Name: String("new lamb"),
+			ID:   8,
+			Name: "new lamb",
 		},
 	}
 
@@ -114,7 +114,7 @@ func TestLightService_Search(t *testing.T) {
 	})
 
 	ctx := context.Background()
-	got, _, err := client.Light.Search(ctx)
+	got, _, err := client.Lights.Search(ctx)
 	if err != nil {
 		t.Errorf("Light.Search returned error: %+v", err)
 	}
@@ -138,7 +138,7 @@ func TestLightService_Rename(t *testing.T) {
 	})
 
 	ctx := context.Background()
-	got, _, err := client.Light.Rename(ctx, "1", "new_name")
+	got, _, err := client.Lights.Rename(ctx, "1", "new_name")
 	if err != nil {
 		t.Errorf("Light.Rename returned error: %+v", err)
 	}
@@ -162,7 +162,7 @@ func TestLightService_SetState(t *testing.T) {
 	})
 
 	ctx := context.Background()
-	got, _, err := client.Light.SetState(ctx, "1", SetStateParams{On: Bool(false), Bri: UInt8(200)})
+	got, _, err := client.Lights.SetState(ctx, "1", SetStateParams{On: Bool(false), Bri: UInt8(200)})
 	if err != nil {
 		t.Errorf("Light.SetState returned error: %+v", err)
 	}
@@ -196,7 +196,7 @@ func TestLightService_Delete(t *testing.T) {
 	})
 
 	ctx := context.Background()
-	got, resp, err := client.Light.Delete(ctx, "1")
+	got, resp, err := client.Lights.Delete(ctx, "1")
 	if err != nil {
 		t.Errorf("Light.Delete returned error: %+v", err)
 	}

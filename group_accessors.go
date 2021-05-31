@@ -3,10 +3,10 @@ package hue
 // GetName returns human readable name of the group.
 // If name is not specified one is generated for you (default name is “Group”)
 func (g *Group) GetName() string {
-	if g == nil || g.Name == nil {
+	if g == nil {
 		return ""
 	}
-	return *g.Name
+	return g.Name
 }
 
 // GetLights returns the ordered set of light ids from the lights which are in the group.
@@ -15,16 +15,11 @@ func (g *Group) GetName() string {
 // If an invalid lights resource is given, error 7 shall be returned and the group is not created. There shall be no change in the lights.
 // Light id can be null if a group has been automatically create by the bridge and a light source is not yet available
 func (g *Group) GetLights() []string {
-	if g == nil || g.Lights == nil {
+	if g == nil {
 		return nil
 	}
 
-	r := make([]string, len(g.Lights))
-	for _, v := range g.Lights {
-		r = append(r, *v)
-	}
-
-	return r
+	return g.Lights
 }
 
 // GetType returns type of the Group. If not provided on creation a “LightGroup” is created. Supported types:
@@ -35,27 +30,25 @@ func (g *Group) GetLights() []string {
 // Entertainment	1.22	Represents an entertainment setup
 // Zone			1.30	Represents a zone
 func (g *Group) GetType() string {
-	if g == nil || g.Name == nil {
+	if g == nil {
 		return ""
 	}
-	return *g.Type
+	return g.Type
 }
 
 // IsOn returns On/Off state of the light. On=true, Off=false
 func (g *Group) IsOn() bool {
-	if g == nil || g.Action == nil || g.Action.On == nil {
+	if g == nil {
 		return false
 	}
-	return *g.Action.On
+	return g.Action.On
 }
 
 // GetBrightness returns which is a scale from 0 (the minimum the light is capable of) to 254 (the maximum).
 // Note: a brightness of 0 is not off.e.g. “brightness”: 60 will set the light to a specific brightness.
 func (g *Group) GetBrightness() int {
-	if g == nil || g.Action == nil || g.Action.Bri == nil {
+	if g == nil {
 		return 0
 	}
-	return *g.Action.Bri
+	return g.Action.Bri
 }
-
-// TODO: Add rest properties
