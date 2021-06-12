@@ -96,7 +96,7 @@ func (s *GroupService) CreateRoom(ctx context.Context, name string, lights []str
 		return "", nil, err
 	}
 
-	apiResponses := make([]ApiResponse, 0)
+	var apiResponses []ApiResponse
 	resp, err := s.client.do(ctx, req, &apiResponses)
 	if err != nil {
 		return "", resp, err
@@ -140,7 +140,7 @@ func (s *GroupService) Update(ctx context.Context, id string, name *string, ligh
 		return false, nil, err
 	}
 
-	apiResponses := make([]ApiResponse, 0)
+	var apiResponses []ApiResponse
 	resp, err := s.client.do(ctx, req, &apiResponses)
 	if err != nil {
 		return false, resp, err
@@ -167,7 +167,7 @@ func (s *GroupService) SetState(ctx context.Context, id string, payload SetState
 		return nil, nil, err
 	}
 
-	apiResponses := make([]ApiResponse, 0)
+	var apiResponses []ApiResponse
 	resp, err := s.client.do(ctx, req, &apiResponses)
 	if err != nil {
 		return nil, resp, err
@@ -183,13 +183,13 @@ func (s *GroupService) Delete(ctx context.Context, id string) (*Response, error)
 		return nil, err
 	}
 
-	apiResponses := make([]map[string]string, 0)
+	var apiResponses []map[string]string
 	resp, err := s.client.do(ctx, req, &apiResponses)
 	if err != nil {
 		return resp, err
 	}
 
-	if apiResponses == nil || len(apiResponses) == 0 {
+	if len(apiResponses) == 0 {
 		return resp, errors.New("the bridge didn't return valid response")
 	}
 

@@ -43,7 +43,7 @@ func (s *LightService) GetAll(ctx context.Context) ([]Light, *Response, error) {
 		return nil, nil, err
 	}
 
-	lights := make(map[string]Light)
+	var lights map[string]Light
 	resp, err := s.client.do(ctx, req, &lights)
 	if err != nil {
 		return nil, resp, err
@@ -80,7 +80,7 @@ func (s *LightService) GetNew(ctx context.Context) (map[string]string, *Response
 		return nil, nil, err
 	}
 
-	parsed := make(map[string]interface{})
+	var parsed map[string]interface{}
 	resp, err := s.client.do(ctx, req, &parsed)
 	if err != nil {
 		return nil, resp, err
@@ -106,7 +106,7 @@ func (s *LightService) Search(ctx context.Context) (*Response, error) {
 		return nil, err
 	}
 
-	apiResponses := make([]ApiResponse, 0)
+	var apiResponses []ApiResponse
 	resp, err := s.client.do(ctx, req, &apiResponses)
 	if err != nil {
 		return resp, err
@@ -129,7 +129,7 @@ func (s *LightService) Rename(ctx context.Context, id, name string) (*Response, 
 		return nil, err
 	}
 
-	apiResponses := make([]ApiResponse, 0)
+	var apiResponses []ApiResponse
 	resp, err := s.client.do(ctx, req, &apiResponses)
 	if err != nil {
 		return resp, err
@@ -149,7 +149,7 @@ func (s *LightService) SetState(ctx context.Context, id string, payload SetState
 		return nil, nil, err
 	}
 
-	apiResponses := make([]ApiResponse, 0)
+	var apiResponses []ApiResponse
 	resp, err := s.client.do(ctx, req, &apiResponses)
 	if err != nil {
 		return nil, resp, err
