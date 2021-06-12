@@ -7,11 +7,12 @@ import (
 	"io/ioutil"
 	"net/http"
 	"reflect"
-	"sort"
 	"strconv"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/stretchr/testify/assert"
 	funk "github.com/thoas/go-funk"
 )
 
@@ -27,11 +28,14 @@ func TestLightService_GetAll(t *testing.T) {
 	})
 
 	ctx := context.Background()
-	lights, _, err := client.Lights.GetAll(ctx)
+	got, resp, err := client.Lights.GetAll(ctx)
 	if err != nil {
 		t.Errorf("Lights.GetAll returned error: %+v", err)
 	}
-	var result map[string]*Light
+
+	assert.Equal(t, http.StatusOK, resp.Response.StatusCode)
+
+	var result map[string]Light
 	json.Unmarshal(bytes, &result)
 
 	for i, l := range result {
@@ -39,14 +43,11 @@ func TestLightService_GetAll(t *testing.T) {
 		l.ID = id
 	}
 
-	want := funk.Values(result).([]*Light)
-	sort.Slice(want, func(i, j int) bool {
-		return want[i].ID < want[j].ID
-	})
+	want := funk.Values(result).([]Light)
 
-	if !reflect.DeepEqual(lights, want) {
-		t.Errorf("Lights.GetAll returned %+v, want %+v", lights, want)
-	}
+	cmp.Equal(got, want, cmpopts.SortSlices(func(x, y Light) bool {
+		return x.ID > y.ID
+	}))
 }
 
 func TestLightService_Get(t *testing.T) {
@@ -54,22 +55,25 @@ func TestLightService_Get(t *testing.T) {
 	defer teardown()
 
 	bytes, _ := ioutil.ReadFile("testdata/Light_Get.json")
-	mux.HandleFunc("/username/lights/1", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc(fmt.Sprintf("/username/lights/%s", testLightId), func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "GET")
 		w.Header().Set("Content-Type", "application/json")
 		fmt.Fprint(w, string(bytes))
 	})
 
 	ctx := context.Background()
-	light, _, err := client.Lights.Get(ctx, "1")
+	got, resp, err := client.Lights.Get(ctx, testLightId)
 	if err != nil {
 		t.Errorf("Light.Get returned error: %+v", err)
 	}
+
+	assert.Equal(t, http.StatusOK, resp.Response.StatusCode)
+
 	want := &Light{}
 	json.Unmarshal(bytes, want)
 
-	if !reflect.DeepEqual(light, want) {
-		t.Errorf("Light.Get returned %+v, want %+v", light, want)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("Light.Get returned %+v, want %+v", got, want)
 	}
 }
 
@@ -85,20 +89,19 @@ func TestLightService_GetNew(t *testing.T) {
 	})
 
 	ctx := context.Background()
-	lights, _, err := client.Lights.GetNew(ctx)
+	got, resp, err := client.Lights.GetNew(ctx)
 	if err != nil {
 		t.Errorf("Light.GetNew returned error: %+v", err)
 	}
 
-	want := []*Light{
-		{
-			ID:   8,
-			Name: "new lamb",
-		},
+	assert.Equal(t, http.StatusOK, resp.Response.StatusCode)
+
+	want := map[string]string{
+		"8": "new lamb",
 	}
 
-	if !reflect.DeepEqual(lights, want) {
-		t.Errorf("Light.GetNew returned %+v, want %+v", lights, want)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("Light.GetNew returned %+v, want %+v", got, want)
 	}
 }
 
@@ -114,16 +117,12 @@ func TestLightService_Search(t *testing.T) {
 	})
 
 	ctx := context.Background()
-	got, _, err := client.Lights.Search(ctx)
+	resp, err := client.Lights.Search(ctx)
 	if err != nil {
 		t.Errorf("Light.Search returned error: %+v", err)
 	}
 
-	want := true
-
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("Light.Search returned %+v, want %+v", got, want)
-	}
+	assert.Equal(t, http.StatusOK, resp.Response.StatusCode)
 }
 
 func TestLightService_Rename(t *testing.T) {
@@ -138,16 +137,12 @@ func TestLightService_Rename(t *testing.T) {
 	})
 
 	ctx := context.Background()
-	got, _, err := client.Lights.Rename(ctx, "1", "new_name")
+	resp, err := client.Lights.Rename(ctx, "1", "new_name")
 	if err != nil {
 		t.Errorf("Light.Rename returned error: %+v", err)
 	}
 
-	want := true
-
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("Light.Rename returned %+v, want %+v", got, want)
-	}
+	assert.Equal(t, http.StatusOK, resp.Response.StatusCode)
 }
 
 func TestLightService_SetState(t *testing.T) {
@@ -162,12 +157,14 @@ func TestLightService_SetState(t *testing.T) {
 	})
 
 	ctx := context.Background()
-	got, _, err := client.Lights.SetState(ctx, "1", SetStateParams{On: Bool(false), Bri: UInt8(200)})
+	got, resp, err := client.Lights.SetState(ctx, "1", SetStateParams{On: Bool(false), Bri: UInt8(200)})
 	if err != nil {
 		t.Errorf("Light.SetState returned error: %+v", err)
 	}
 
-	want := []*ApiResponse{
+	assert.Equal(t, http.StatusOK, resp.Response.StatusCode)
+
+	want := []ApiResponse{
 		{
 			Success: map[string]interface{}{
 				"/lights/1/state/on": false,
@@ -196,18 +193,10 @@ func TestLightService_Delete(t *testing.T) {
 	})
 
 	ctx := context.Background()
-	got, resp, err := client.Lights.Delete(ctx, "1")
+	resp, err := client.Lights.Delete(ctx, "1")
 	if err != nil {
 		t.Errorf("Light.Delete returned error: %+v", err)
 	}
 
-	want := true
-
-	if !cmp.Equal(got, want) {
-		t.Errorf("Light.Delete returned %+v, want %+v", got, want)
-	}
-
-	if !cmp.Equal(resp.StatusCode, http.StatusOK) {
-		t.Errorf("Light.Delete returned status code %+v, want %+v", resp.StatusCode, http.StatusOK)
-	}
+	assert.Equal(t, http.StatusOK, resp.Response.StatusCode)
 }

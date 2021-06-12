@@ -1,16 +1,24 @@
 package hue
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
 
+	"github.com/muesli/gamut"
 	"github.com/sirupsen/logrus"
 )
 
-const (
+var (
 	baseURLPath = "/api"
+
+	testLightId  = "1"
+	testGroupId  = "1"
+	testColor    = gamut.Hex("#FF0000")
+	testColorHex = "#FF0000"
 )
 
 func setup() (client *Client, mux *http.ServeMux, serverURL string, teardown func()) {
@@ -35,5 +43,16 @@ func testMethod(t *testing.T, r *http.Request, want string) {
 	t.Helper()
 	if got := r.Method; got != want {
 		t.Errorf("Request method: %v, want %v", got, want)
+	}
+}
+
+func getPayload(t *testing.T, r *http.Request, payload interface{}) {
+	bytes, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		t.Errorf("Request payload failed to read")
+	}
+	err = json.Unmarshal(bytes, payload)
+	if err != nil {
+		t.Errorf("Request payload failed to unmarshal")
 	}
 }

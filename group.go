@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"net/http"
-	"sort"
 	"strconv"
 
 	funk "github.com/thoas/go-funk"
@@ -36,13 +35,13 @@ func (s *GroupService) groupServicePath(params ...string) string {
 }
 
 // GetAll returns all groups
-func (s *GroupService) GetAll(ctx context.Context) ([]*Group, *Response, error) {
+func (s *GroupService) GetAll(ctx context.Context) ([]Group, *Response, error) {
 	req, err := s.client.newRequest(http.MethodGet, s.groupServicePath(), nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	groups := make(map[string]*Group)
+	var groups map[string]Group
 	resp, err := s.client.do(ctx, req, &groups)
 	if err != nil {
 		return nil, resp, err
@@ -53,12 +52,7 @@ func (s *GroupService) GetAll(ctx context.Context) ([]*Group, *Response, error) 
 		g.ID = id
 	}
 
-	orderedGroups := funk.Values(groups).([]*Group)
-	sort.Slice(orderedGroups, func(i, j int) bool {
-		return orderedGroups[i].ID < orderedGroups[j].ID
-	})
-
-	return orderedGroups, resp, nil
+	return funk.Values(groups).([]Group), resp, nil
 }
 
 // CreateGroup creates light group and returns id of the created group
@@ -73,18 +67,18 @@ func (s *GroupService) CreateGroup(ctx context.Context, name string, lights []st
 		return "", nil, err
 	}
 
-	apiResponses := new([]ApiResponse)
-	resp, err := s.client.do(ctx, req, apiResponses)
+	var apiResponses []ApiResponse
+	resp, err := s.client.do(ctx, req, &apiResponses)
 	if err != nil {
 		return "", resp, err
 	}
 
-	if apiResponses == nil || len(*apiResponses) == 0 || (*apiResponses)[0].Error != nil {
-		return "", resp, errors.New((*apiResponses)[0].Error.Description)
+	if len(apiResponses) == 0 || (apiResponses)[0].Error != nil {
+		return "", resp, errors.New((apiResponses)[0].Error.Description)
 	}
 
 	// Get first success message
-	successResponse := (*apiResponses)[0].Success
+	successResponse := (apiResponses)[0].Success
 
 	return successResponse["id"].(string), resp, nil
 }
@@ -102,18 +96,18 @@ func (s *GroupService) CreateRoom(ctx context.Context, name string, lights []str
 		return "", nil, err
 	}
 
-	apiResponses := new([]ApiResponse)
-	resp, err := s.client.do(ctx, req, apiResponses)
+	var apiResponses []ApiResponse
+	resp, err := s.client.do(ctx, req, &apiResponses)
 	if err != nil {
 		return "", resp, err
 	}
 
-	if apiResponses == nil || len(*apiResponses) == 0 || (*apiResponses)[0].Error != nil {
-		return "", resp, errors.New((*apiResponses)[0].Error.Description)
+	if len(apiResponses) == 0 || (apiResponses)[0].Error != nil {
+		return "", resp, errors.New((apiResponses)[0].Error.Description)
 	}
 
 	// Get first success message
-	successResponse := (*apiResponses)[0].Success
+	successResponse := (apiResponses)[0].Success
 
 	return successResponse["id"].(string), resp, nil
 }
@@ -146,18 +140,18 @@ func (s *GroupService) Update(ctx context.Context, id string, name *string, ligh
 		return false, nil, err
 	}
 
-	apiResponses := new([]ApiResponse)
-	resp, err := s.client.do(ctx, req, apiResponses)
+	var apiResponses []ApiResponse
+	resp, err := s.client.do(ctx, req, &apiResponses)
 	if err != nil {
 		return false, resp, err
 	}
 
-	if apiResponses == nil || len(*apiResponses) == 0 {
+	if len(apiResponses) == 0 {
 		return false, resp, errors.New("the bridge didn't return valid response")
 	}
 
 	// If response has any error, return as fail
-	for _, r := range *apiResponses {
+	for _, r := range apiResponses {
 		if r.Error != nil {
 			return false, resp, errors.New(r.Error.Description)
 		}
@@ -167,37 +161,37 @@ func (s *GroupService) Update(ctx context.Context, id string, name *string, ligh
 }
 
 // SetState updates state of the group
-func (s *GroupService) SetState(ctx context.Context, id string, payload SetStateParams) ([]*ApiResponse, *Response, error) {
+func (s *GroupService) SetState(ctx context.Context, id string, payload SetStateParams) ([]ApiResponse, *Response, error) {
 	req, err := s.client.newRequest(http.MethodPut, s.groupServicePath(id, "action"), payload)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	apiResponses := new([]*ApiResponse)
-	resp, err := s.client.do(ctx, req, apiResponses)
+	var apiResponses []ApiResponse
+	resp, err := s.client.do(ctx, req, &apiResponses)
 	if err != nil {
 		return nil, resp, err
 	}
 
-	return *apiResponses, resp, nil
+	return apiResponses, resp, nil
 }
 
 // Delete removes the group
-func (s *GroupService) Delete(ctx context.Context, id string) (bool, *Response, error) {
+func (s *GroupService) Delete(ctx context.Context, id string) (*Response, error) {
 	req, err := s.client.newRequest(http.MethodDelete, s.groupServicePath(id), nil)
 	if err != nil {
-		return false, nil, err
+		return nil, err
 	}
 
-	apiResponses := new([]map[string]string)
-	resp, err := s.client.do(ctx, req, apiResponses)
+	var apiResponses []map[string]string
+	resp, err := s.client.do(ctx, req, &apiResponses)
 	if err != nil {
-		return false, resp, err
+		return resp, err
 	}
 
-	if apiResponses == nil || len(*apiResponses) == 0 {
-		return false, resp, errors.New("the bridge didn't return valid response")
+	if len(apiResponses) == 0 {
+		return resp, errors.New("the bridge didn't return valid response")
 	}
 
-	return true, resp, nil
+	return resp, nil
 }
