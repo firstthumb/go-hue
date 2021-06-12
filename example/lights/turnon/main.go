@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
@@ -12,6 +11,7 @@ import (
 
 var (
 	clientID = flag.String("clientId", "", "ClientId for Hue for API access.")
+	lightID  = flag.String("lightID", "1", "LightId to turn on.")
 )
 
 func main() {
@@ -31,7 +31,9 @@ func main() {
 	}
 
 	client := hue.NewClient(host, *clientID, nil)
-	result, _, _ := client.Lights.GetAll(context.Background())
-	lights, _ := json.Marshal(result)
-	fmt.Println(string(lights))
+	if err := client.Lights.TurnOn(context.Background(), *lightID); err != nil {
+		fmt.Println("Cannot turn on the light", err)
+	} else {
+		fmt.Println("Turned on the light")
+	}
 }
