@@ -37,7 +37,7 @@ go get github.com/firstthumb/go-hue
 
 ## Authentication
 
-Philips Hue uses local authorization. First you need to create user.
+Philips Hue uses local and remote authorization. First you need to create user.
 
 ## Usage
 
@@ -96,6 +96,7 @@ fmt.Println(string(lights))
 Currently the following services are supported:
 
 - [x] [Remote API](https://developers.meethue.com/develop/hue-api/remote-api-quick-start-guide/)
+  - [x] Remote Login
 - [x] [Lights API](https://developers.meethue.com/develop/hue-api/lights-api/)
   - [x] Get all lights
   - [x] Get new lights

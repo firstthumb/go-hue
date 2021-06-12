@@ -1,7 +1,7 @@
 package hue
 
 type Light struct {
-	ID               int
+	ID               int          `json:"-"`
 	State            State        `json:"state,omitempty"`
 	SWUpdate         SWUpdate     `json:"swupdate,omitempty"`
 	Type             string       `json:"type,omitempty"`

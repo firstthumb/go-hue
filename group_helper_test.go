@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"reflect"
 	"sync"
 	"testing"
 	"time"
@@ -15,30 +14,17 @@ func TestGroupService_TurnOn(t *testing.T) {
 	client, mux, _, teardown := setup()
 	defer teardown()
 
-	groupId := "1"
 	bytes, _ := ioutil.ReadFile("testdata/Group_TurnOn.json")
-	mux.HandleFunc(fmt.Sprintf("/username/groups/%s/action", groupId), func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc(fmt.Sprintf("/username/groups/%s/action", testGroupId), func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "PUT")
 		w.Header().Set("Content-Type", "application/json")
 		fmt.Fprint(w, string(bytes))
 	})
 
 	ctx := context.Background()
-	got, _, err := client.Groups.TurnOn(ctx, groupId)
+	err := client.Groups.TurnOn(ctx, testGroupId)
 	if err != nil {
 		t.Errorf("Group.TurnOn returned error: %+v", err)
-	}
-
-	want := []*ApiResponse{
-		{
-			Success: map[string]interface{}{
-				"/groups/1/action/on": true,
-			},
-		},
-	}
-
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("Group.TurnOn returned %+v, want %+v", got, want)
 	}
 }
 
@@ -46,30 +32,17 @@ func TestGroupService_TurnOff(t *testing.T) {
 	client, mux, _, teardown := setup()
 	defer teardown()
 
-	groupId := "1"
 	bytes, _ := ioutil.ReadFile("testdata/Group_TurnOff.json")
-	mux.HandleFunc(fmt.Sprintf("/username/groups/%s/action", groupId), func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc(fmt.Sprintf("/username/groups/%s/action", testGroupId), func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "PUT")
 		w.Header().Set("Content-Type", "application/json")
 		fmt.Fprint(w, string(bytes))
 	})
 
 	ctx := context.Background()
-	got, _, err := client.Groups.TurnOff(ctx, groupId)
+	err := client.Groups.TurnOff(ctx, testGroupId)
 	if err != nil {
 		t.Errorf("Group.TurnOff returned error: %+v", err)
-	}
-
-	want := []*ApiResponse{
-		{
-			Success: map[string]interface{}{
-				"/groups/1/action/on": false,
-			},
-		},
-	}
-
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("Group.TurnOff returned %+v, want %+v", got, want)
 	}
 }
 

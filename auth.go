@@ -12,6 +12,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/pkg/browser"
 	"golang.org/x/oauth2"
 )
 
@@ -91,6 +92,8 @@ func (a *Authenticator) Authenticate() (*Client, error) {
 	authUrl := a.AuthURL(state)
 	fmt.Printf("Go to %v\n", authUrl)
 	fmt.Println("Waiting 1 minute for the action")
+
+	browser.OpenURL(authUrl)
 
 	u, _ := url.Parse(a.config.RedirectURL)
 	srv := &http.Server{

@@ -1,0 +1,1 @@
+[{ "success": { "/lights/{{.LightId}}/state/on": true } }]
