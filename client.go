@@ -144,16 +144,6 @@ func NewClient(host, clientId string, opts *ClientOptions) *Client {
 	return c
 }
 
-func NewClientRemote(opts *ClientOptions) *Client {
-	c, err := newClient("https://api.meethue.com/v2/", opts)
-	if err != nil {
-		c.logger.Error(err, "Couldn't create client")
-		return nil
-	}
-
-	return c
-}
-
 // CreateUser creates local user on the bridge and returns authenticated client instance
 // Don't forget to press bridge button otherwise it will fail
 func CreateUser(host, deviceType string, opts *ClientOptions) (*Client, error) {
