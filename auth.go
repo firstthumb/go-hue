@@ -24,6 +24,7 @@ const (
 
 type Authenticator struct {
 	config  *oauth2.Config
+	token   *oauth2.Token
 	context context.Context
 }
 
@@ -65,6 +66,10 @@ func (a *Authenticator) AuthURL(state string) string {
 
 func (a *Authenticator) AuthURLWithOpts(state string, opts ...oauth2.AuthCodeOption) string {
 	return a.config.AuthCodeURL(state, opts...)
+}
+
+func (a *Authenticator) GetToken() *oauth2.Token {
+	return a.token
 }
 
 func (a *Authenticator) Token(state string, r *http.Request) (*oauth2.Token, error) {
@@ -129,6 +134,7 @@ func (a *Authenticator) Authenticate() (*Client, error) {
 
 	select {
 	case token = <-tokenCh:
+		a.token = token
 		client = a.NewClient(token)
 		return client, nil
 

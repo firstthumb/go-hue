@@ -52,6 +52,7 @@ func (s *LightService) GetAll(ctx context.Context) ([]Light, *Response, error) {
 	for k, l := range lights {
 		id, _ := strconv.Atoi(k)
 		l.ID = id
+		lights[k] = l
 	}
 
 	return funk.Values(lights).([]Light), resp, nil
